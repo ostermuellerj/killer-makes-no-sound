@@ -1,7 +1,10 @@
 import peasy.*;
+import processing.video.*;
 
 PeasyCam cam;
 Icosphere dw;
+
+Capture webcam;
 
 float inc;
 Boolean doRotate = true;
@@ -24,11 +27,34 @@ void setup () {
 	colorMode(HSB);
 	// frameRate(10);
 
+	webcam = new Capture(this, Capture.list()[0]);
+	webcam.start();
+
+	// Check for cameras: (DEBUG)
+	// String[] cameras = Capture.list();
+	// if (cameras.length == 0) {
+	// 	println("There are no cameras available for capture.");
+	// 	exit();
+	// } else {
+	// 	println("Available cameras:");
+	// 	for (int i = 0; i < cameras.length; i++) {
+	// 		println(cameras[i]);
+	// }
+	// 	// The camera can be initialized directly using an 
+	// 	// element from the array returned by list():
+	// 	webcam = new Capture(this, cameras[0]);
+	// 	webcam.start();     
+	// }
+
 	start=millis();
 }
 
 void draw () {
 	background(0);
+	if (webcam.available() == true) {
+    	webcam.read();
+  	}
+	image(webcam, width/2, height/2);
 
 	// run the Icosphere
 	pushMatrix();
