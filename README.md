@@ -19,6 +19,7 @@
 - [ ] **Write a function to perform transformations on the icosphere that still preserve the masks (somehow....)**
 - [ ] **Add an fft (from VISUALIZER repo) to make icosphere audio-reactive**
 - [ ] **Add a controller for additional webcams and/or existing videos (and collect some sick vids if we get this working)**
+- [ ] **Add a trigger for everything to blow up @ the new year**
 
 # Other to-do for show
 - [ ] **Finish setlist**
