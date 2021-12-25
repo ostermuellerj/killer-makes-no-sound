@@ -3,33 +3,29 @@ import processing.video.*;
 
 PeasyCam cam;
 Icosphere dw;
-
 Capture webcam;
 
-float inc;
 Boolean doRotate = true;
-
-float sw=15;
-
 int startSize = 0;
-
 int start;
-//debug Space.display()
-int o = 10;
+float inc;
 
 void setup () {
 	dw = new Icosphere(startSize);
 	cam = new PeasyCam(this, 100);	
 
-	size(900, 900, P3D);
-	// fullScreen(P3D);
+	// size(900, 900, P3D);
+	fullScreen(P3D);
+	
 	colorMode(HSB);
+	textureWrap(REPEAT);
+	textureMode(NORMAL); 
 	// frameRate(10);
 
 	webcam = new Capture(this, Capture.list()[0]);
 	webcam.start();
 
-	// Check for cameras: (DEBUG)
+	// Debug: check for cameras
 	// String[] cameras = Capture.list();
 	// if (cameras.length == 0) {
 	// 	println("There are no cameras available for capture.");
@@ -39,29 +35,22 @@ void setup () {
 	// 	for (int i = 0; i < cameras.length; i++) {
 	// 		println(cameras[i]);
 	// }
-	// 	// The camera can be initialized directly using an 
-	// 	// element from the array returned by list():
-	// 	webcam = new Capture(this, cameras[0]);
-	// 	webcam.start();     
-	// }
 
+	// Set the start time
 	start=millis();
 }
 
 void draw () {
 	background(0);
-	if (webcam.available() == true) {
-    	webcam.read();
-  	}
-	image(webcam, width/2, height/2);
+	getCameraFrame();
 
-	// run the Icosphere
+	// Run the Icosphere
 	pushMatrix();
-		// slight constant rotation
-		if(doRotate) {
-			inc += 0.002;
-			rotate(inc);
-		}
+		
+		// Rotate the Icosphere
+		if(doRotate) inc += 0.002;
+		rotate(inc);
+
 		dw.run();
 	popMatrix();
 
@@ -70,32 +59,40 @@ void draw () {
 	cam.endHUD();
 }
 
+/*
+	Keyboard controls.
+*/
 void keyPressed() {
-	// increment Icosphere size up
+	// Increment Icosphere size up
 	if (keyCode == UP) {
 		startSize++;
 		println(startSize);
 		dw = new Icosphere(startSize);
-
-		// sw-=5;
-		// stroke(sw/30*255%255, 180, 255, 150);
-		// strokeWeight(sw);
 	}
-	// increment Icosphere size down
+
+	// Increment Icosphere size down
 	else if (keyCode == DOWN) {
 		startSize = max(0, startSize-1);
 		println(startSize);
 		dw = new Icosphere(startSize);
-
-		// sw+=5;
-		// stroke(sw/30*255%255, 180, 255, 150);
-		// strokeWeight(sw);
 	} 
-	// restart sim with same initial parameters
+
+	// Restart sim with same initial parameters
 	else if (key == 'r') {
 		dw = new Icosphere(startSize);
-	}
+	} 
+
+	// Toggle rotation and "inc"
 	else if (key == 'k') {
-		doRotate=true; 
+		doRotate=!doRotate; 
 	}
+}
+
+/*
+	Get a frame from the webcam if available.
+*/
+void getCameraFrame(){
+  if (webcam.available() == true) {
+      webcam.read();
+  }  
 }
