@@ -18,7 +18,6 @@ int start;
 int o = 10;
 
 void setup () {
-
 	dw = new Icosphere(startSize);
 	cam = new PeasyCam(this, 100);	
 
