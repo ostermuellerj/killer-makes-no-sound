@@ -2,6 +2,10 @@ class Icosphere {
 	float size = 200;
 	float density = 0;
 
+	PImage img;
+	Boolean imgExists = false;
+	PShape face;
+
 	// all available spaces		
 	ArrayList<Space> emptySpaces;
 	// all spaces
@@ -19,6 +23,7 @@ class Icosphere {
 		density = s;
 		buildSpaces();
 		emptySpaces = new ArrayList<Space>(spaces);
+		makeFace();
 	}
 
 	/*
@@ -75,13 +80,13 @@ class Icosphere {
 				
 			}
 
-			// make a copy of the parent spaces
+			// Make a copy of the parent spaces
 			ArrayList<Space> parentSpaces = new ArrayList<Space>(spaces);
 
-			// populate spaces array with new spaces
+			// Populate spaces array with new spaces
 			spaces = newSpaces;
 
-			// another pass over parent spaces to bridge the 
+			// Another pass over parent spaces to bridge the 
 			// previously undefined neighbor-connections
 			for(Space s : parentSpaces) {
 				//s.n1
@@ -247,41 +252,52 @@ class Icosphere {
 		Displays the Icosphere.
 	*/
 	void display () {
-		//draw icosphere
-		pushMatrix();
-		// scale(10);
-		for(Space p : spaces) {
-			p.display();
+		// If the camera has loaded, create a placeholder image
+		if(webcam.width>1 && !imgExists) img = createImage(webcam.width, webcam.height, RGB);
+		// if(webcam.width>1 && !imgExists) {
+		// 	img = createImage(webcam.width, webcam.height, RGB); 
+		// 	imgExists = true;
+		// }
+		img = webcam.copy();
+		try {    
+			face.setTexture(img);  
+		} catch (Exception e) {}
+
+		for(Space s : spaces) {
+			face.setVertex(0, s.verts[0]);
+			face.setVertex(1, s.verts[1]);
+			face.setVertex(2, s.verts[2]);
+			shape(face,0,0);
 		}
+
+		// Draw icosphere
+		pushMatrix();
+			for(Space p : spaces) {
+				p.display();
+			}
 		popMatrix();
 
 		noStroke();
-		//draw rects
-		// fill(255/3, 100, 255, 150);
-		// beginShape(QUADS);
-		// vertex(ico[0].x, ico[0].y, ico[0].z);
-		// vertex(ico[2].x, ico[2].y, ico[2].z);
-		// vertex(ico[3].x, ico[3].y, ico[3].z);
-		// vertex(ico[1].x, ico[1].y, ico[1].z);
-		// endShape();
 
-		// fill(2*255/3, 100, 255, 150);
-		// beginShape(QUADS);
-		// vertex(ico[4].x, ico[4].y, ico[4].z);
-		// vertex(ico[6].x, ico[6].y, ico[6].z);
-		// vertex(ico[7].x, ico[7].y, ico[7].z);
-		// vertex(ico[5].x, ico[5].y, ico[5].z);
-		// endShape();
-
-		// fill(255, 100, 255, 150);
-		// beginShape(QUADS);
-		// vertex(ico[8].x, ico[8].y, ico[8].z);
-		// vertex(ico[10].x, ico[10].y, ico[10].z);
-		// vertex(ico[11].x, ico[11].y, ico[11].z);
-		// vertex(ico[9].x, ico[9].y, ico[9].z);
-		// endShape();
+		// drawRects();
 	}
 
+	/*
+		Defines a PShape from existing vertices.
+	*/
+	void makeFace() {
+		face = createShape();
+		face.beginShape();
+			float size = 1000;
+			float uv_size = 1;
+			// face.vertex(0, 0, uv_size/2, 0);
+			// face.vertex(0, 0, uv_size, uv_size);
+			// face.vertex(0, 0, 0, uv_size);
+			face.vertex(spaces.get(0).verts[0].x, spaces.get(0).verts[0].y, uv_size/2, 0);
+			face.vertex(spaces.get(0).verts[1].x, spaces.get(0).verts[1].y, uv_size, uv_size);
+			face.vertex(spaces.get(0).verts[2].x, spaces.get(0).verts[2].y, 0, uv_size);
+		face.endShape(CLOSE);
+		}
 	/*
 		Checks if a given space is empty.
 		return true = space is empty
@@ -301,5 +317,35 @@ class Icosphere {
 	PVector pointToSphere(PVector p) {
 		float mag = sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
 		return new PVector(size*p.x/mag, size*p.y/mag, size*p.z/mag);		
+	}
+
+	/*
+		Draws reference rectangles that define an icosahedron, see:
+		https://en.wikipedia.org/wiki/Regular_icosahedron#/media/File:Icosahedron-golden-rectangles.svg
+	*/
+	void drawRects() {
+		fill(255/3, 100, 255, 150);
+		beginShape(QUADS);
+			vertex(ico[0].x, ico[0].y, ico[0].z);
+			vertex(ico[2].x, ico[2].y, ico[2].z);
+			vertex(ico[3].x, ico[3].y, ico[3].z);
+			vertex(ico[1].x, ico[1].y, ico[1].z);
+		endShape();
+
+		fill(2*255/3, 100, 255, 150);
+		beginShape(QUADS);
+			vertex(ico[4].x, ico[4].y, ico[4].z);
+			vertex(ico[6].x, ico[6].y, ico[6].z);
+			vertex(ico[7].x, ico[7].y, ico[7].z);
+			vertex(ico[5].x, ico[5].y, ico[5].z);
+		endShape();
+
+		fill(255, 100, 255, 150);
+		beginShape(QUADS);
+			vertex(ico[8].x, ico[8].y, ico[8].z);
+			vertex(ico[10].x, ico[10].y, ico[10].z);
+			vertex(ico[11].x, ico[11].y, ico[11].z);
+			vertex(ico[9].x, ico[9].y, ico[9].z);
+		endShape();
 	}
 }

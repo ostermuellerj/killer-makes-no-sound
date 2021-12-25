@@ -11,7 +11,7 @@ PeasyCam cam;
 Boolean imgExists = false;
 
 void setup() {
-  size(800, 800, P3D);
+  size(1200, 800, P3D);
 
   photo = loadImage("yes.png");
   cam = new PeasyCam(this, 100);  
@@ -39,14 +39,21 @@ void draw() {
   img = webcam.copy();
   try {    
     // Debug with static photo
-    tar.setTexture(photo);  
+    // tar.setTexture(photo);  
     tar.setTexture(img);  
   } catch (Exception e) {}
   
   // Display PShape
-  shape(tar, -width/2, -height/2);
+  // shape(tar, -width/2, -height/2);
+  for(float i=-10;i<10;i++) {
+    // shape(tar, 1100*i, 0);
+    pushMatrix();
+      // rotate((i/20)*TWO_PI);
+      rotateX((i/20)*TWO_PI);
+      shape(tar, 0, 0);
+    popMatrix();
+  }
 }
-
 
 // Get a frame from the webcam if available
 void getCameraFrame(){
@@ -58,11 +65,12 @@ void getCameraFrame(){
 // Define the PShape
 void makeShape(){
   tar = createShape();
-  tar.beginShape(QUADS);
-    int size = 1000;
-    int uv_size = 1;
-    tar.vertex(0,0,0,0);
-    tar.vertex(size,0,uv_size,0);
+  tar.beginShape();
+    float size = 1000;
+    float uv_size = 1;
+    // tar.vertex(0,0,0,0);
+    // tar.vertex(size,0,uv_size,0);
+    tar.vertex(size/2,0,uv_size/2,0);
     tar.vertex(size,size,uv_size,uv_size);
     tar.vertex(0,size,0,uv_size);
   tar.endShape(CLOSE);
